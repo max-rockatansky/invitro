@@ -1,1188 +1,325 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- v2.1.0 -->
 <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title></title>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
-<link rel="stylesheet" type="text/css" href="assets/idrviewer.css">
-<script src="assets/idrviewer.js" type="text/javascript"></script>
-<script src="assets/idrviewer.querystring-navigation.js"></script>
-<script src="assets/idrviewer.fullscreen.js"></script>
-<script src="assets/idrviewer.search.js"></script>
-<script src="assets/idrviewer.annotations.js"></script>
-<script type="text/javascript">
-(function () {
-    "use strict";
-    const LanguageHelper = (function () {
-        const translationsList = {
-            "ja":{"control.sidebar": "サイドバー","control.theme-toggle": "テーマ切換","control.prev": "前のページ",
-                "control.next": "次のページ","control.select": "選択","control.move": "パン","control.zoom-out": "縮小",
-                "control.zoom-in": "拡大","control.actual-size": "実際のサイズ","control.fit-width": "幅に合わせる",
-                "control.fit-height": "高さに合わせる","control.fit-page": "ページに合わせる","control.auto": "自動",
-                "control.fullscreen": "フルスクリーン","control.thumbnails": "サムネイル","control.bookmarks": "ブックマーク",
-                "control.presentation": "プレゼンテーション","control.magazine": "マガジン","control.continuous": "スクロール",
-                "control.search": "検索","control.page": "ページ","search.search": "検索","search.match-case": " 大文字・小文字を区別",
-                "search.limit-results-1": " 結果を1ページ１つに制限する","search.limit-results-500": "最初の500件が表示されます。",
-                "search.results-count": " 件","search.unavailable": "検索できません","search.loading": "ローディング"},
-            "fr":{"control.sidebar": "Barre latérale","control.theme-toggle": "Basculer entre les thèmes","control.prev": "Page précédente",
-                "control.next": "Page suivante","control.select": "Sélectionner","control.move": "Déplacer","control.zoom-out": "Zoom arrière",
-                "control.zoom-in": "Zoom avant","control.actual-size": "Taille réelle","control.fit-width": "Pleine largeur",
-                "control.fit-height": "Pleine hauteur","control.fit-page": "Page entière","control.auto": "Automatique",
-                "control.fullscreen": "Plein écran","control.thumbnails": "Vignettes","control.bookmarks": "Signets",
-                "control.presentation": "Présentation","control.magazine": "Magazine","control.continuous": "En continu",
-                "control.search": "Recherche","control.page": "Page","search.search": "Rechercher","search.match-case": " Respecter la casse",
-                "search.limit-results-1": " Limiter les résultats à 1 par page","search.limit-results-500": "Limitée aux 500 premiers résultats",
-                "search.results-count": " résultats","search.unavailable": "Recherche non accessible","search.loading": "Chargement en cours"},
-            "de":{"control.sidebar": "Seitenleiste","control.theme-toggle": "Darstellung wechseln","control.prev": "Vorherige Seite",
-                "control.next": "Nächste Seite","control.select": "Auswählen","control.move": "Bewegen","control.zoom-out": "Zoom Out",
-                "control.zoom-in": "Zoom In","control.actual-size": "Tatsächliche Grösse","control.fit-width": "Breite füllend",
-                "control.fit-height": "Höhe füllend","control.fit-page": "Seite füllend","control.auto": "Automatisch",
-                "control.fullscreen": "Ganzer Bildschirm","control.thumbnails": "Mini-Ansichten","control.bookmarks": "Lesezeichen",
-                "control.presentation": "Präsentationsdarstellung","control.magazine": "Magazindarstellung",
-                "control.continuous": "Fortlaufende Darstellung","control.search": "Suchen","control.page": "Seite","search.search": "Suchen",
-                "search.match-case": "Gross-/Kleinschreibung beachten","search.limit-results-1": "Auf 1 Resultat pro Seite begrenzen",
-                "search.limit-results-500": "Auf die ersten 500 Resultate begrenzen.","search.results-count": " Resultat(e)",
-                "search.unavailable": "Suche nicht verfügbar.","search.loading": "Lade"},
-            "hi":{"control.sidebar": "साइडबार","control.theme-toggle": "विषय टॉगल","control.prev": "पिछला पृष्ठ",
-                "control.next": "अगला पृष्ठ","control.select": "चुनते हैं","control.move": "पान","control.zoom-out": "छोटा करें",
-                "control.zoom-in": "बड़ा करें","control.actual-size": "वास्तविक आकार","control.fit-width": "चौड़ाई पर फ़िट",
-                "control.fit-height": "ठीक ऊंचाई","control.fit-page": "फिट पेज","control.auto": "स्वचालित",
-                "control.fullscreen": "पूर्ण स्क्रीन","control.thumbnails": "थंबनेल","control.bookmarks": "बुकमार्क",
-                "control.presentation": "प्रदर्शन","control.magazine": "पत्रिका",
-                "control.continuous": "निरंतर","control.search": "खोज","control.page": "पृष्ठ","search.search": "खोज",
-                "search.match-case": "मिलान घटना","search.limit-results-1": "सीमा परिणाम 1 प्रति पृष्ठ",
-                "search.limit-results-500": "पहले 500 परिणामों तक सीमित है","search.results-count": " परिणाम",
-                "search.unavailable": "उपलब्ध नहीं खोजें।","search.loading": "लोड हो रहा है"}
-        };
-
-        const lang = (navigator.language || navigator.userLanguage).substr(0, 2);
-        const translations = translationsList[lang] ? translationsList[lang] : false;
-
-        return {
-            getTranslation: function (name) {
-                return translations ? translations[name] : null;
-            },
-
-            updateElements: function () {
-                if (translations) {
-                    document.documentElement.setAttribute('lang', lang);
-                    let i, element;
-                    const titleElements = document.querySelectorAll('[data-lang-title]');
-                    for (i = 0; i < titleElements.length; i++) {
-                        element = titleElements[i];
-                        if (translations[element.dataset.langTitle]) {
-                            element.title = translations[element.dataset.langTitle];
-                        }
-                    }
-                    const textElements = document.querySelectorAll('[data-lang-text]');
-                    for (i = 0; i < textElements.length; i++) {
-                        element = textElements[i];
-                        if (translations[element.dataset.langText]) {
-                            element.innerText = translations[element.dataset.langText];
-                        }
-                    }
-                }
-            }
-        };
-    })();
-
-    /**
-     * Shorthand helper function to getElementById
-     * @param id
-     * @returns {Element}
-     */
-    const d = function (id) {
-        return document.getElementById(id);
-    };
-
-    const ClassHelper = (function () {
-        return {
-            addClass: function (ele, name) {
-                const classes = ele.className.length !== 0 ? ele.className.split(' ') : [];
-                const index = classes.indexOf(name);
-                if (index === -1) {
-                    classes.push(name);
-                    ele.className = classes.join(' ');
-                }
-            },
-
-            removeClass: function (ele, name) {
-                const classes = ele.className.length !== 0 ? ele.className.split(' ') : [];
-                const index = classes.indexOf(name);
-                if (index !== -1) {
-                    classes.splice(index, 1);
-                }
-                ele.className = classes.join(' ');
-            },
-
-            toggleClass: function (ele, name) {
-                const classes = ele.className.length !== 0 ? ele.className.split(' ') : [];
-                const index = classes.indexOf(name);
-                let wasClassAdded;
-                if (index === -1) {
-                    classes.push(name);
-                    wasClassAdded = true;
-                } else {
-                    classes.splice(index, 1);
-                    wasClassAdded = false;
-                }
-                ele.className = classes.join(' ');
-                return wasClassAdded;
-            }
-        };
-    })();
-
-    /**
-     * Encapsulation of sidebar functionality
-     */
-    const Sidebar = (function () {
-        const Sidebar = {},
-              panels = {};
-        let sidebar,
-            defaultPanel,
-            currentPanel;
-
-        IDRViewer.on('ready', function (data) {
-            d('btnSideToggle').addEventListener('click', Sidebar.toggleSidebar);
-            sidebar = d('sidebar');
-
-            for (let prop in panels) {
-                panels[prop].setup(data);
-                if (prop === defaultPanel) {
-                    panels[prop].show();
-                } else {
-                    panels[prop].hide();
-                }
-            }
-            currentPanel = defaultPanel;
-        });
-
-        Sidebar.register = function (name, handler, isDefault) {
-            panels[name] = handler;
-            if (isDefault) {
-                defaultPanel = name;
-            }
-        };
-
-        Sidebar.switchTo = function (name) {
-            if (currentPanel === name) {
-                return;
-            }
-            panels[currentPanel].hide();
-            currentPanel = name;
-            panels[currentPanel].show();
-        };
-
-        Sidebar.openSidebar = function () {
-            if (sidebar.className.indexOf('open') === -1) {
-                Sidebar.toggleSidebar();
-            }
-        };
-
-        /**
-         * Toggle the sidebar open and closed
-         */
-        Sidebar.toggleSidebar = function () {
-            if (ClassHelper.toggleClass(sidebar, 'open')) {
-                panels[currentPanel].show();
-            }
-        };
-
-        return Sidebar;
-    })();
-
-    /**
-     * Encapsulation of Search panel
-     */
-    (function () {
-        let searchPanel,
-            searchBtn,
-            isSearchLoaded,
-            searchInputEle,
-            resultsCountEle,
-            matchCaseCheckbox,
-            limitResultsCheckbox;
-
-        const setup = function () {
-            searchBtn = d('btnSearch');
-            searchBtn.addEventListener('click', function () {
-                Sidebar.switchTo('search');
-            });
-
-            searchPanel = d('search-panel');
-            searchInputEle = d('searchInput');
-            resultsCountEle = d('searchResultsCount');
-            matchCaseCheckbox = d('cbMatchCase');
-            limitResultsCheckbox = d('cbLimitResults');
-
-            searchInputEle.value = LanguageHelper.getTranslation('search.loading') || 'Loading';
-            searchInputEle.disabled = 'disabled';
-            searchInputEle.addEventListener('input', doSearch);
-            matchCaseCheckbox.addEventListener('click', doSearch);
-            limitResultsCheckbox.addEventListener('click', doSearch);
-
-            document.addEventListener('keydown', function (event) {
-                if (event.keyCode === 70 && (event.ctrlKey || event.metaKey)) {
-                    Sidebar.openSidebar();
-                    Sidebar.switchTo('search');
-                    event.preventDefault();
-                }
-            });
-        };
-
-        const clickHandler = function (e) {
-            IDRViewer.goToPage(this.dataset.page);
-            e.preventDefault();
-        };
-
-        const doSearch = function () {
-            const resultDiv = document.getElementById('searchResults');
-            resultDiv.innerText = '';
-
-            const searchTerm = searchInputEle.value;
-            const matchCase = matchCaseCheckbox.checked;
-            const limitOnePerPage = limitResultsCheckbox.checked;
-
-            const results = IDRViewer.search(searchTerm, matchCase, limitOnePerPage);
-
-            resultsCountEle.innerText = String(results.length) + (LanguageHelper.getTranslation('search.results-count') || ' results');
-
-            const docFrag = document.createDocumentFragment();
-            for (let i = 0; i < results.length && i < 500; i++) {
-                const pg = results[i].page;
-
-                const link = document.createElement('a');
-                link.href = '?page=' + pg;
-                link.innerText = results[i].snippet;
-                link.className = 'result';
-                link.dataset.page = pg;
-                link.addEventListener('click', clickHandler);
-
-                docFrag.appendChild(link);
-            }
-            if (results.length >= 500) {
-                const element = document.createElement('span');
-                element.innerText = LanguageHelper.getTranslation('search.limit-results-500') || 'Limited to first 500 results.';
-                element.className = 'result';
-                docFrag.appendChild(element);
-            }
-            resultDiv.appendChild(docFrag);
-        };
-
-        Sidebar.register('search', {
-            setup: setup,
-            show: function () {
-                ClassHelper.removeClass(searchPanel, 'hidden');
-                ClassHelper.addClass(searchBtn, 'disabled');
-
-                const loadListener = function (loaded) {
-                    if (loaded) {
-                        searchInputEle.value = '';
-                        searchInputEle.disabled = '';
-                        searchInputEle.focus();
-                    } else {
-                        searchInputEle.value = LanguageHelper.getTranslation('search.unavailable') || 'Search not available.';
-                    }
-                };
-                const progressListener = function (percentageLoaded) {
-                    searchInputEle.value = (LanguageHelper.getTranslation('search.loading') || 'Loading') + ' (' + percentageLoaded + '%)';
-                };
-                if (!isSearchLoaded) {
-                    IDRViewer.loadSearch(loadListener, progressListener);
-                }
-                searchInputEle.focus();
-            },
-            hide: function () {
-                ClassHelper.addClass(searchPanel, 'hidden');
-                ClassHelper.removeClass(searchBtn, 'disabled');
-            }
-        });
-    })();
-
-    /**
-     * Encapsulation of Thumbnails panel
-     */
-    (function () {
-        const loadedThumbsArray = [],
-              thumbnailPositions = [],
-              MAX_THUMBNAIL_WIDTH = 160,
-              MAX_THUMBNAIL_HEIGHT = 200;
-        let thumbnailPanel,
-            thumbnailBtn,
-            imageType,
-            pgCount,
-            curPg,
-            scrollSidebar = true,
-            thumbnailTimeout,
-            spinnerInterval;
-
-        const setup = function (data) {
-            thumbnailBtn = d('btnThumbnails');
-            thumbnailBtn.addEventListener('click', function () {
-                Sidebar.switchTo('thumbnails');
-            });
-
-            thumbnailPanel = d('thumbnails-panel');
-            thumbnailPanel.addEventListener('scroll', handleThumbnailBarScroll);
-
-            curPg = data.page;
-            pgCount = data.pagecount;
-            imageType = data.thumbnailType;
-
-            loadThumbnailFrames(data.bounds);
-            // Initialise loaded array
-            for (let i = 0; i < pgCount; i++) {
-                loadedThumbsArray[i] = false;
-            }
-        };
-
-        /**
-         * Load the frames for all the thumbnails
-         * @param bounds Page bound array
-         */
-        const loadThumbnailFrames = function (bounds) {
-            const heights = [];
-            // Calculate height for max width of 160px and max height of 200px
-            for (let i = 0; i < bounds.length; i++) {
-                const height = Math.floor(bounds[i][1] * (MAX_THUMBNAIL_WIDTH / bounds[i][0]));
-                heights[i] = (bounds[i][0] > bounds[i][1] || height <= MAX_THUMBNAIL_HEIGHT) ? height : MAX_THUMBNAIL_HEIGHT;
-            }
-
-            const clickHandler = function (e) {
-                scrollSidebar = false;
-                IDRViewer.goToPage(this.dataset.page);
-                e.preventDefault();
-            }
-
-            for (let page = 1; page <= bounds.length; page++) {
-                const ele = document.createElement('a');
-                ele.style.height = heights[page - 1] + 'px';
-                ele.className = 'thumbnail';
-                ele.href = '?page=' + page;
-                ele.id = 'thumb' + page;
-                ele.dataset.page = String(page);
-                ele.addEventListener('click', clickHandler);
-                ele.setAttribute('title', (LanguageHelper.getTranslation('control.page') || 'Page') + ' ' + page);
-                const margin = Math.floor((heights[page - 1] - 42) / 2);
-                ele.innerHTML = '<div class="spinner" style="margin-top: ' + margin + 'px;"></div>';
-                thumbnailPanel.appendChild(ele);
-            }
-
-            for (let page = 1; page <= bounds.length; page++) {
-                thumbnailPositions[page - 1] = thumbnailPanel.children[page - 1].offsetTop;
-            }
-        };
-
-        const handleThumbnailBarScroll = function () {
-            if (!spinnerInterval) {
-                spinnerInterval = setInterval(showVisibleSpinners, 250);
-            }
-            if (thumbnailTimeout) {
-                clearTimeout(thumbnailTimeout);
-            }
-            thumbnailTimeout = setTimeout(loadVisibleThumbnails, 500);
-        };
-
-        const showVisibleSpinners = function () {
-            const startY = thumbnailPanel.scrollTop;
-            const endY = startY + thumbnailPanel.clientHeight;
-            for (let index = 0; index < pgCount; index++) {
-                if (!loadedThumbsArray[index]) {
-                    if (thumbnailPositions[index] + MAX_THUMBNAIL_WIDTH > startY && thumbnailPositions[index] < endY) {
-                        ClassHelper.addClass(thumbnailPanel.children[index].firstChild, 'spinning');
-                    } else {
-                        ClassHelper.removeClass(thumbnailPanel.children[index].firstChild, 'spinning');
-                    }
-                }
-            }
-        };
-
-        const loadVisibleThumbnails = function () {
-            if (spinnerInterval) {
-                spinnerInterval = clearInterval(spinnerInterval);
-            }
-            thumbnailTimeout = null;
-
-            // load thumbs in view
-            for (let thumbIndex = 0; thumbIndex < pgCount; thumbIndex++) {
-                if (!loadedThumbsArray[thumbIndex]) {
-                    const curThumb = thumbnailPanel.children[thumbIndex];
-                    // Bails out of the loop when the next thumbnail is below the viewable area
-                    if (curThumb.offsetTop > thumbnailPanel.scrollTop + thumbnailPanel.clientHeight) {
-                        break;
-                    }
-                    if (curThumb.offsetTop + curThumb.clientHeight > thumbnailPanel.scrollTop) {
-                        curThumb.innerHTML = '<img src="thumbnails/' + (thumbIndex + 1) + '.' + imageType + '" />';
-                        loadedThumbsArray[thumbIndex] = true;
-                    }
-                }
-            }
-        };
-
-        IDRViewer.on('pagechange', function (data) {
-            curPg = data.page;
-            if (thumbnailPanel.className.indexOf('hidden') === -1) {
-                updateThumbnailPanelToCurrentPage();
-            }
-            scrollSidebar = true;
-        });
-
-        const updateThumbnailPanelToCurrentPage = function () {
-            const curThumb = thumbnailPanel.children[curPg - 1];
-            if (curThumb.className.indexOf('currentPageThumbnail') === -1) {
-
-                for (let i = 0; i < pgCount; i++) {
-                    ClassHelper.removeClass(thumbnailPanel.children[i], 'currentPageThumbnail');
-                }
-
-                ClassHelper.addClass(curThumb, 'currentPageThumbnail');
-
-                if (scrollSidebar) {
-                    thumbnailPanel.scrollTop = thumbnailPanel.scrollTop + curThumb.getBoundingClientRect().top - thumbnailPanel.getBoundingClientRect().top;
-                }
-            }
-        };
-
-        Sidebar.register('thumbnails', {
-            setup: setup,
-            show: function () {
-                ClassHelper.removeClass(thumbnailPanel, 'hidden');
-                ClassHelper.addClass(thumbnailBtn, 'disabled');
-
-                setTimeout(showVisibleSpinners, 250);
-                loadVisibleThumbnails();
-                updateThumbnailPanelToCurrentPage();
-            },
-            hide: function () {
-                ClassHelper.addClass(thumbnailPanel, 'hidden');
-                ClassHelper.removeClass(thumbnailBtn, 'disabled');
-            }
-        }, true);
-    })();
-
-    /**
-     * Encapsulation of Bookmarks panel
-     */
-    (function () {
-        let bookmarkPanel,
-            bookmarkBtn;
-
-        const setup = function (data) {
-            bookmarkBtn = d('btnBookmarks');
-            bookmarkBtn.addEventListener('click', function () {
-                Sidebar.switchTo('bookmarks');
-            });
-
-            bookmarkPanel = d('bookmarks-panel');
-            if (data.bookmarks.length > 0) {
-                addBookmark(bookmarkPanel, data.bookmarks);
-            } else {
-                ClassHelper.addClass(bookmarkBtn, 'hidden');
-            }
-        };
-
-        const clickHandler = function () {
-            IDRViewer.goToPage(parseInt(this.dataset.page), this.dataset.zoom);
-        };
-
-        const addBookmark = function (container, bookmarks) {
-            const outer = document.createElement('ul');
-            for (let i = 0; i < bookmarks.length; i++) {
-                const bookmark = bookmarks[i];
-                const li = document.createElement('li');
-                li.setAttribute('title', 'Page ' + bookmark.page);
-                li.innerText = bookmark.title;
-                li.dataset.page = bookmark.page;
-                li.dataset.zoom = bookmark.zoom;
-                li.addEventListener('click', clickHandler);
-                outer.appendChild(li);
-                if (typeof(bookmark.children) != 'undefined') {
-                    addBookmark(outer, bookmark.children);
-                }
-            }
-            container.appendChild(outer);
-        };
-
-        Sidebar.register('bookmarks', {
-            setup: setup,
-            show: function () {
-                ClassHelper.removeClass(bookmarkPanel, 'hidden');
-                ClassHelper.addClass(bookmarkBtn, 'disabled');
-            },
-            hide: function () {
-                ClassHelper.addClass(bookmarkPanel, 'hidden');
-                ClassHelper.removeClass(bookmarkBtn, 'disabled');
-            }
-        });
-    })();
-
-    /**
-     * Encapsulation of navigation controls
-     */
-    (function () {
-        let hasPageLabels,
-            pgCountEle,
-            pageCount,
-            isR2L,
-            goBtn,
-            nextBtn,
-            prevBtn;
-
-        const handleGoBtn = function () {
-            IDRViewer.goToPage(parseInt(goBtn.options[goBtn.selectedIndex].value));
-            this.blur();
-        };
-
-        const populateGoBtn = function (initialPage, pgCount, pageLabels) {
-            goBtn.innerText = '';
-            for (let i = 1; i <= pgCount; i++) {
-                const opt = document.createElement('option');
-                opt.value = String(i);
-                opt.innerText = pageLabels.length ? pageLabels[i - 1] : String(i);
-                goBtn.appendChild(opt);
-            }
-            goBtn.selectedIndex = initialPage - 1;
-        };
-
-        const getPageString = function (page, pageCount) {
-            let result = '/ ' + pageCount;
-            if (hasPageLabels) {
-                result =  '(' + page + ' / ' + pageCount + ')';
-            }
-            return result;
-        };
-
-        const swapNavButtonsForR2L = function () {
-            nextBtn.parentNode.insertBefore(prevBtn, nextBtn);
-            prevBtn.parentNode.insertBefore(nextBtn, prevBtn.parentNode.firstChild);
-            const nextInnerHtml = nextBtn.innerHTML;
-            nextBtn.innerHTML = prevBtn.innerHTML;
-            prevBtn.innerHTML = nextInnerHtml;
-        };
-
-        const keyDownHandler = function (e) {
-            switch (e.keyCode) {
-                case 33: // Page Up
-                    IDRViewer.prev();
-                    e.preventDefault();
-                    break;
-                case 34: // Page Down
-                    IDRViewer.next();
-                    e.preventDefault();
-                    break;
-
-                case 37: // Left Arrow
-                    isR2L ? IDRViewer.next() : IDRViewer.prev();
-                    e.preventDefault();
-                    break;
-                case 39: // Right Arrow
-                    isR2L ? IDRViewer.prev() : IDRViewer.next();
-                    e.preventDefault();
-                    break;
-
-                case 36: // Home
-                    IDRViewer.goToPage(1);
-                    e.preventDefault();
-                    break;
-                case 35: // End
-                    IDRViewer.goToPage(pageCount);
-                    e.preventDefault();
-                    break;
-            }
-        };
-
-        const pageChangeListener = function (data) {
-            pgCountEle.innerText = getPageString(data.page, data.pagecount);
-            goBtn.selectedIndex = data.page - 1;
-
-            if (data.isFirstPage) {
-                ClassHelper.addClass(prevBtn, 'disabled');
-            } else {
-                ClassHelper.removeClass(prevBtn, 'disabled');
-            }
-            if (data.isLastPage) {
-                ClassHelper.addClass(nextBtn, 'disabled');
-            } else {
-                ClassHelper.removeClass(nextBtn, 'disabled');
-            }
-        };
-
-        IDRViewer.on('ready', function (data) {
-            hasPageLabels = !!data.pageLabels.length;
-            pageCount = data.pagecount;
-            isR2L = data.isR2L;
-
-            pgCountEle = d('pgCount');
-            goBtn = d('btnGo');
-            prevBtn = d('btnPrev');
-            nextBtn = d('btnNext');
-
-            if (data.isFirstPage) {
-                ClassHelper.addClass(prevBtn, 'disabled');
-            }
-            if (data.isLastPage) {
-                ClassHelper.addClass(nextBtn, 'disabled');
-            }
-
-            goBtn.addEventListener('change', handleGoBtn);
-            prevBtn.addEventListener('click', function (e) { IDRViewer.prev(); e.preventDefault(); });
-            nextBtn.addEventListener('click', function (e) { IDRViewer.next(); e.preventDefault(); });
-
-            if (data.isR2L) {
-                swapNavButtonsForR2L();
-            }
-
-            document.addEventListener('keydown', keyDownHandler);
-
-            populateGoBtn(data.page, data.pagecount, data.pageLabels);
-
-            pgCountEle.innerText = getPageString(data.page, data.pagecount);
-
-            IDRViewer.on('pagechange', pageChangeListener);
-        });
-    })();
-
-    /**
-     * Encapsulation of Zoom controls
-     */
-    (function () {
-        let zoomBtn,
-            zoomInBtn,
-            zoomOutBtn;
-
-        const handleZoomUpdate = function (data) {
-            zoomBtn.value = data.zoomType;
-            zoomBtn.options[0].innerText = Math.floor(data.zoomValue * 100) + '%';
-
-            if (data.isMinZoom) {
-                ClassHelper.addClass(zoomOutBtn, 'disabled');
-            } else {
-                ClassHelper.removeClass(zoomOutBtn, 'disabled');
-            }
-            if (data.isMaxZoom) {
-                ClassHelper.addClass(zoomInBtn, 'disabled');
-            } else {
-                ClassHelper.removeClass(zoomInBtn, 'disabled');
-            }
-        };
-
-        const handleZoomBtn = function () {
-            const zoomType = zoomBtn.value;
-            if (zoomType !== IDRViewer.ZOOM_SPECIFIC) {
-                IDRViewer.setZoom(zoomType);
-            }
-            this.blur();
-        };
-
-        IDRViewer.on('ready', function () {
-            zoomBtn = d('btnZoom');
-            zoomInBtn = d('btnZoomIn');
-            zoomOutBtn = d('btnZoomOut');
-
-            zoomBtn.addEventListener('change', handleZoomBtn);
-
-            zoomInBtn.addEventListener('click', function (e) { IDRViewer.zoomIn(); e.preventDefault(); });
-            zoomOutBtn.addEventListener('click', function (e) { IDRViewer.zoomOut(); e.preventDefault(); });
-
-            zoomBtn.value = IDRViewer.ZOOM_AUTO;
-
-            IDRViewer.on('zoomchange', handleZoomUpdate);
-        });
-    })();
-
-    /**
-     * Encapsulation of Layout controls
-     */
-    (function () {
-        let viewBtn;
-
-        const handleViewBtn = function () {
-            IDRViewer.setLayout(viewBtn.value);
-            this.blur();
-        };
-
-        const setupLayoutSwitching = function (pgCount, layout, availableLayouts) {
-            if (availableLayouts.length > 1 && pgCount > 1) {
-                let temp = document.createElement('option');
-                temp.innerText = LanguageHelper.getTranslation('control.presentation') || 'Presentation';
-                temp.value = IDRViewer.LAYOUT_PRESENTATION;
-                viewBtn.appendChild(temp);
-
-                if (availableLayouts.indexOf(IDRViewer.LAYOUT_MAGAZINE) !== -1) {
-                    temp = document.createElement('option');
-                    temp.innerText = LanguageHelper.getTranslation('control.magazine') || 'Magazine';
-                    temp.value = IDRViewer.LAYOUT_MAGAZINE;
-                    viewBtn.appendChild(temp);
-                }
-                if (availableLayouts.indexOf(IDRViewer.LAYOUT_CONTINUOUS) !== -1) {
-                    temp = document.createElement('option');
-                    temp.innerText = LanguageHelper.getTranslation('control.continuous') || 'Continuous';
-                    temp.value = IDRViewer.LAYOUT_CONTINUOUS;
-                    viewBtn.appendChild(temp);
-                }
-                viewBtn.addEventListener('change', handleViewBtn);
-                viewBtn.value = layout;
-            } else {
-                ClassHelper.addClass(viewBtn, 'hidden');
-            }
-        };
-
-        IDRViewer.on('ready', function (data) {
-            viewBtn = d('btnView');
-            setupLayoutSwitching(data.pagecount, data.layout, data.availableLayouts);
-        });
-    })();
-
-    /**
-     * Encapsulation of Selection/Panning controls
-     */
-    (function () {
-        let moveBtn,
-            selectBtn;
-
-        const updateSelectionButtons = function (mode) {
-            switch (mode) {
-                case IDRViewer.SELECT_PAN:
-                    ClassHelper.removeClass(selectBtn, 'disabled');
-                    ClassHelper.addClass(moveBtn, 'disabled');
-                    break;
-                case IDRViewer.SELECT_SELECT:
-                    ClassHelper.removeClass(moveBtn, 'disabled');
-                    ClassHelper.addClass(selectBtn, 'disabled');
-                    break;
-            }
-        };
-
-        const handleSelectionChange = function (data) {
-            updateSelectionButtons(data.type);
-        };
-
-        IDRViewer.on('ready', function (data) {
-            moveBtn = d('btnMove');
-            selectBtn = d('btnSelect');
-
-            moveBtn.addEventListener('click', function (e) { IDRViewer.setSelectMode(IDRViewer.SELECT_PAN); e.preventDefault(); });
-            selectBtn.addEventListener('click', function (e) { IDRViewer.setSelectMode(IDRViewer.SELECT_SELECT); e.preventDefault(); });
-
-            updateSelectionButtons(data.selectMode);
-
-            IDRViewer.on('selectchange', handleSelectionChange);
-        });
-    })();
-
-    /**
-     * Main setup function that runs on load
-     */
-    IDRViewer.on('ready', function (data) {
-        LanguageHelper.updateElements(); // Set up localization
-
-        document.title = data.title ? data.title : data.fileName; // Set title
-
-        // Set up theme toggle
-        d('btnThemeToggle').addEventListener('click', function () {
-            const isDarkTheme = document.body.className.indexOf('dark-theme') !== -1;
-            ClassHelper.removeClass(document.body, 'light-theme');
-            ClassHelper.removeClass(document.body, 'dark-theme');
-            ClassHelper.addClass(document.body, isDarkTheme ? 'light-theme' : 'dark-theme');
-        });
-
-        // Set up fullscreen toggle
-        const fullScreenBtn = d('btnFullScreen');
-        if (IDRViewer.isFullscreenEnabled()) {
-            fullScreenBtn.addEventListener('click', function(e) { IDRViewer.toggleFullScreen(); e.preventDefault(); });
-        } else {
-            ClassHelper.addClass(fullScreenBtn, 'hidden');
-        }
-
-        // Remove buttons which are unnecessary mobile/tablet touch screens
-        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            ClassHelper.addClass(document.body, 'is-mobile');
-        }
-
-        (function reticulateSplines() {
-            var el = document.createElement("div");
-            el.innerHTML = atob("PGRpdiBzdHlsZT0icG9zaXRpb246Zml4ZWQ7cmlnaHQ6MzBweDtib3R0b206MTVweDtib3JkZXItcmFkaXVz" +
-              "OjVweDtib3gtc2hhZG93OiAxcHggMXB4IDRweCByZ2JhKDEyMCwxMjAsMTIwLDAuNSk7bGluZS1oZWlnaHQ6MDtvdmVyZmxvdzpoaW" +
-              "RkZW47Ij48YSBocmVmPSJodHRwczovL3d3dy5pZHJzb2x1dGlvbnMuY29tL2J1aWxkdnUvIiByZWw9Im5vZm9sbG93IiB0YXJnZXQ9" +
-              "Il9ibGFuayI+PGltZyBhbHQ9IkNyZWF0ZWQgd2l0aCBCdWlsZFZ1IiBzdHlsZT0iYm9yZGVyOjA7IiBzcmM9ImRhdGE6aW1hZ2UvcG" +
-              "5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBSllBQUFBdENBTUFBQUI3MG1KbUFBQUNQVkJNVkVYLy8vLysvdjBkSFJ2" +
-              "NysvdjgvUHlJaUlmYjI5di9iMG41d3k3MzkvZjR3aXY0d1NscWFtcng4ZkcwdExQNHZ5WGw1ZVhnNE9EQ3dzSjRlSGR1Ym0zVDA5UD" +
-              "R3Q2YzdmlQZTN0MnhzYkZnWUYvNHdpMzN2Qi9yNit1aG9hQ0VoSU9CZ1lCeGNYQlpXVmZvNk9oUlVWRkRRMElwS1NqajQrTm9hR2Ri" +
-              "VzFvbEpTUDN1Qlh6OC9QS3lzcGRYVjFKU1VjOFBEdjJ0USs2dXJxNHVMZGtaR1JVVkZQL2NFcjJ1aG42K3ZxcXFxcW1wcVpMUzBwQl" +
-              "FUODRPRGI1K2ZuMTlmWFgxOWZIeDhlK3ZyMmVucDZhbXBxWGw1ZU9qbzU4Zkh0MWRYVnpjM05XVmxaSFIwWGxueDM0dXh6Ky9mcnQ3" +
-              "ZTMrK2V2aTR1TFkyTmpRME5ERnhjV3VycTJVbEpSUFQwNGdJQi9uNStmT3pzN0J3Y0g4NTYraW9xS0tpb241MG12K256ejltVHMwTk" +
-              "RMNHdqSDR2aUhub3lIbm9CLzJ1aHZqblJqZ21CUCsvdnorOE16TXpNejk3Y1gvd0svODVxaWpvNk9Sa1pIL2JVcitxajMrcFQzOGp6" +
-              "VXRMU3p1cWgvMXNnais5K1RhMnRyLzI5TC8xc3ovekwvNzNJYUdob1g2Mm9INTBGMzV6RTcvYzA3K2wwSDV5RUQ5a1VEK2RrRC9zRH" +
-              "ozeER2OGtqbi93RGoxdVNULysvcisrdkgvOU9ycTZ1ci83T2YvNXQvKzg5Zjg2cjM4NDUveDBwai9wby80eTRML2tYVDUwV1AvZzJI" +
-              "NXlVVC9uMFQrYjBQL3REdit0emZ5cERMOGhUTDRzaTdycENJYkd4dnlyeGIvOXZQKzZ0ajk4dFAvMWNyNDU4bisyOFgrM2NQOTRxMy" +
-              "91cWYvdUtUKzE1di9ycGo3NEpYL25JTDlwNEQ1MVh6NjFXL3N3R3Y3cm1UK3RtUCtrMkg5cDFQbXFUdnpxQzZaVVdMMEFBQUdYVWxF" +
-              "UVZSWXcrMlloMTlTVVJUSHo3czg1WUdBVEJOSUJRRVZBeVFRVXlRMTl5cHpsWmxsYXBxMmQ3YjMzbnZ2dmZjZWYxdm52aWRGRmlPcl" +
-              "QzMCsrZnZvdS9kdzEvZWRjKzY5ZklCUmplcS9GQU0vcS9nNEVNRWYxbno0SjdFNnB3SXdJOGRpWWd3SU04eUtOdmJDemdYWTRSZThs" +
-              "YW53ZXpKeENvYmgvN0Vtck12Q1YzdFdLaTJEVkFVZW9DcjNSM0Q2Sm83cndMNGp4bHBxelRMWFZuNDNmK1BDVU11d05OUzdGWDVITT" +
-              "lZTU15RzhPamlPMnpSU2I3R2djSy9EMHNIS1U5U1pvUFNrQUJRN25RQ1Fwbld3WVBGWXFEdWJVM0piRUVPT2RRbEFBeXVCU3ExU1ZH" +
-              "VExkRnJDK3VNNDE4TnhXNmVHdGs5aFl2ZVd6Y2w3UU9Lck5hUjZDbVcyaGFETjlhV0Q0cWJiS3ZlaVBRbVdXYXRzMHhGWGJpc0Nsd2" +
-              "JhZlpiY1NXM2Q2ZTNLREUzV3hKSndYRk8zY2FnTDN5WVlFeXRXUzdxRUwyZGs2MENIaTgvV1VxdFd6ZFlXbzIyQlpUVmVxd2owTGtB" +
-              "djVzaWJNdXdnbTlXY0pkRmlpQXNNREdncmdRMnpTMTV6bk5GbzdGbnlsZWdNWll3TlM1OHJkQ3kxQTB6TE1NWFovVkJRWXk1c2pMZG" +
-              "lTbWVZTnJ2OHVXcUFzaG9BeUhlcHFzczFTaXRVVk1UTDBIdWFWQUN6Tit4Q0p4RkxhcFJ5VzRKNzkxVC8va1ZZeG9SVkVwRHo1YlE0" +
-              "VEtmcWZDWDZ5enlqTkFkbXpRYUlNNlBOMU1WanJZTE9iWkxGWmNhNVVrSG1VVlBNNlpodk5tWFlkUmIxY0ZLcE5FRnEzTHFXdCs4UE" +
-              "RGemYvNGh5UmNkaXdHeFhNVTFPTUhnQnZMWWpUQU5NTDhOc0FuTVplakJnZ1JUUVZrTjdZUXVncW02cXdMNWFCTlltdnd4RWpweEdp" +
-              "QThBS214eUdSRXJJVUc2Y3hHYWh6NE9ES3paZitVcFFFeFlZSExKWEV1aDJrSTNmcnFoSE5RK1U1eVptZW5US3FFODNWQUJTb05Nby" +
-              "tWZDZ0K01ma3VGaGtwSGsxV1duRm5wQU9leUNDZndPYzZJVkVsSkNVbFNUTEEzOWYwRGZWY3U3emt6SlRvV3o2WFVLVEdmaFdvSnJt" +
-              "OVJnVHdmVkNWRnVCR296ZW9hdnZTbDQxZ0o5dEZKV0d3dnlvOXdKejRYc0JJVEU1T1NOcDJxcjYvdjc3OStlYytLZDRlQm50c1JzTD" +
-              "dmdVZHMk14T3RRMmpiQXNTaVZHTlFpUWQ2Ni92cSt6L3RXYkZ5em9jN2YrK3FSazNaeXcxaHpSMDdkdTZCTlgxOTlUZFdJRmJYam9l" +
-              "d2VNTmZ3NEpPQVl0U1RaNDNlY0thdnQ3ZWxTdm56T2xhdGVybDh1M3JnWW1LeGJBUjRqR3lucWlUUVN5a21qQmgzTGhidmIxWEw4N3" +
-              "AycmZxMmlXeE9HL0RuL0FXRTBPQzNlV01OT1hIVUdjaDFmanh0MjVjdmJpamE5KzFTM2xpc1hqN3ZVaFg5YlJBbmRzZE1IalF5S3kx" +
-              "NmVnOVpMQ3BBU1JWYmdVdTJWN25VdzVsZXBtdExoREkwVFJqblFGOWhjQlRVSTZQNU0yODRkQU9QN21NMGlFc1NvVWFYTk8xWTllcT" +
-              "NjdkZxRHp4UnB6cHgxajVvQ1ZrOVdwQ3lGTDhtQkRrQVZVR2FVV3NRbEtPbzBvSlNlWUhzMUJGU0hZYjlweE5aMnZLS1FLVUtGZVB6" +
-              "Mlk3ZnpNMnVPRmJiYUZZWXhCTGNOYmc0T0RldDd2MkJhbkVRYTd2c0xEUUVKZEUzbVFsMC9HbE04Z2tpaldSNkJFcm5hVGlJRFhKVm" +
-              "cxaHBSR1hNcjdVVEVnWm9HUUtRT25TK1djV2p5WFBHWWExaE9POUZZemhnVmNuNE1FdXBCS3dVSXVSS3h5V2pGNkpwQzRHTEJva0hE" +
-              "RHhDSTJlZHVncXpRK1BkWHluVVFnaUpueFA1eUo2dmg5K0w4N0x5K094cUI0alZ4Z3NlNHBGN1c2YkZRT1dqRTVpSWNSSkU5R2dRc3" +
-              "VIRVE2UHhXemxwSWcxZC9MZXpvN2duWE5zdzhiRlQ1NmRQdjNpN05uejU3ZFRmNFhCNHFXRjJMQ3dZVFh4MHJJR1g2UWxGeUlFY1Fw" +
-              "c3dTZ21KblIyclAzQmpqMTQrK2pSWSt2WEh3eUg1YTZjcmMwbWFSUkw4RU1Vckd5aXBxWGV6RUoxUVNTcytYQ0M2em5YY1NqeU1SSU" +
-              "9pNzZ4aDVCbWlxV0dJbWpzSnQ1UXJHUVFNUXlQaGFzejRDVnQ4ZnhRWDNLeElWUEFzdlB6eVF1SG4yMVRsNnlGYUlxVThpMkV6SVFV" +
-              "RzZtbXlVemFra094TEVKUHhESmo2ZXdtTXNFMnRlcXJnRmRqSVQrZHNpN01tVHNDckJveU1jMms2U1lCQjBBbDVsaVpLWVBZYWF4OH" +
-              "BBem5uVWxJYmE3Qkpac0JZQ0xkTlZvN0lXNTZ2dUpmaVYzVENvS3lwZ0hLcElIaFhQT1pFV0pWRTE3dWRseW9PSXV2MXpWU3JGcVN5" +
-              "bU1KV2dmb0xhbzJXVXJRQzRWV09RaEt0bFo1RldhREE2SXJ4bStudWxhRlFxOVlLQmhRYWpKWDZWbHFzSk5hVlZpa0tIaDVjTVVTUF" +
-              "ZaS0crQ0xkTTRnSUJUN1RTWjAzYTlqeFJKK0p2UkdaaUwvTUlINmpWakFzRlJNMEJMbGk5alFyekRNMTNhK2huUS9KR1ZGb21HTS8r" +
-              "WVBTU1BRdXJSL0VrdFpBQ3lNYWxTaitqMzZESlBYRlVmWVU0NDFBQUFBQUVsRlRrU3VRbUNDIiAvPjwvYT48L2Rpdj4=");
-            document.body[atob("YXBwZW5kQ2hpbGQ=")](el.firstChild);
-        })();
-    });
-})();
-</script>
-<style type="text/css">
-    body {
-        margin: 0;
-        padding: 0;
-    }
-
-    /* Viewer panel */
-    #idrviewer {
-        top: 45px;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        position: absolute;
-    }
-    .light-theme #idrviewer {
-        background: #fafafa none repeat scroll 0 0;
-    }
-    .dark-theme #idrviewer {
-        background: #666 none repeat scroll 0 0;
-    }
-    .page {
-        box-shadow: 1px 1px 4px rgba(120, 120, 120, 0.5);
-    }
-
-    /* Shared utilities */
-    .is-mobile .mobile-hidden {
-        display: none;
-    }
-    .hidden {
-        display: none;
-    }
-
-    /* Menu bars */
-    #controls {
-        height: 44px;
-        position: fixed;
-        text-align: center;
-        top: 0;
-        left: 0;
-        right: 0;
-        transition: 0.3s ease 0s;
-    }
-    #controls-left {
-        display: inline-block;
-        left: 0;
-        position: absolute;
-    }
-    #controls-center {
-        display: inline-block;
-    }
-    #controls-right {
-        display: inline-block;
-        right: 0;
-        position: absolute;
-    }
-    
-    #controls select {
-        height: 25px;
-        margin-top: 10px;
-    }
-    .btn {
-        border: 0 none;
-        height: 30px;
-        padding: 0;
-        width: 30px;
-        background-color: transparent;
-        display: inline-block;
-        margin: 7px 5px 0;
-        vertical-align: top;
-        cursor: pointer;
-    }
-    #pgCount {
-        font-family: Arial,serif;
-        vertical-align: middle;
-        font-size: 15px;
-    }
-    #pgCount,
-    .btn,
-    #controls select {
-        color: white;
-    }
-    
-    #btnSelect, #btnZoomOut, #btnView {
-        margin-left: 20px;
-    }
-    #btnGo {
-        width: 55px;
-    }
-    #btnView {
-        width: 105px;
-    }
-    #btnZoom {
-        width: 95px;
-    }
-
-    .light-theme .controls {
-        background: #9eacba none repeat scroll 0 0;
-        border-bottom: 1px solid #7b8793;
-    }
-    .dark-theme .controls {
-        background: #444 none repeat scroll 0 0;
-        border-bottom: 1px solid #000;
-    }
-    .light-theme #pgCount,
-    .light-theme .btn {
-        text-shadow: 0 0 1px #595959;
-    }
-    .dark-theme #pgCount {
-        opacity: 0.8;
-    }
-    .dark-theme .btn {
-        opacity: 0.7;
-    }
-    .light-theme .btn:hover {
-        opacity: 0.6;
-    }
-    .dark-theme .btn:hover {
-        opacity: 0.95;
-    }
-    .light-theme .btn.disabled {
-        opacity: 0.4;
-    }
-    .dark-theme .btn.disabled {
-        opacity: 0.2;
-    }
-    .light-theme #controls select {
-        background-color: #9aa8b6;
-        border: 1px solid #7b8793;
-    }
-    .dark-theme #controls select {
-        background-color: #656565;
-        border: 1px solid #000;
-    }
-
-    /* Sidebar */
-    #sidebar {
-        transition-timing-function: ease;
-        transition-duration: 200ms;
-        top: 45px;
-        bottom: 0;
-        position: absolute;
-        overflow: hidden;
-        z-index: 999;
-        left: -350px;
-        width: 350px;
-    }
-    #sidebar.open {
-        left: 0;
-    }
-    #sidebar-controls {
-        height: 44px;
-        display: block;
-    }
-    #sidebar-content {
-        top: 45px;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        position: absolute;
-        background-color: #eee;
-    }
-    #sidebar-content>div {
-        overflow-y: scroll;
-        -webkit-overflow-scrolling: touch;
-        height: 100%;
-    }
-    .light-theme #sidebar {
-        border-right: 1px solid #7b8793;
-    }
-    .dark-theme #sidebar {
-        border-right: 1px solid #000;
-    }
-
-    /* Thumbnails panel */
-    .thumbnail {
-        cursor: pointer;
-        display: block;
-        padding: 8px 0;
-        margin: 0 auto;
-        text-align: center;
-    }
-    .thumbnail img{
-        max-width: 160px;
-        border-radius: 5px;
-        border: 1px solid #bbb;
-    }
-    .currentPageThumbnail, .thumbnail:hover {
-        background-color: #ddd;
-    }
-    .currentPageThumbnail img, .thumbnail:hover img {
-        border: 1px solid #999;
-    }
-    .spinner {
-        border: 6px solid #bbb;
-        border-top: 6px solid #3c9fe1;
-        border-radius: 50%;
-        width: 30px;
-        height: 30px;
-        margin: 0 auto;
-    }
-    .spinning {
-        animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    /* Bookmarks panel */
-    #bookmarks-panel ul {
-        list-style-type: none;
-        padding: 0 5px;
-    }
-    #bookmarks-panel ul ul {
-        padding-left: 15px;
-        padding-right: 0;
-    }
-    #bookmarks-panel li {
-        color: #333;
-        padding: 2px;
-        font-family: Arial,serif;
-        font-size: 15px;
-    }
-    #bookmarks-panel li:hover {
-        background-color: #ddd;
-        cursor: pointer;
-    }
-
-    /* Search panel */
-    #search-panel {
-        font-family: Arial, sans-serif;
-        font-size: 14px;
-    }
-    #search-panel * {
-        color: #333;
-        margin: 5px;
-    }
-    #search-panel #searchInput {
-        color: black;
-        border: 1px solid #666;
-        width: 288px;
-        display: block;
-        padding: 5px;
-        margin: 20px auto 10px;
-    }
-    #search-panel .searchOption {
-        margin: 0 20px;
-        display: block;
-    }
-    #search-panel hr {
-        margin-top: 18px;
-    }
-    #search-panel #searchResultsCount {
-        text-align: center;
-        display: block;
-    }
-    #search-panel .result {
-        text-decoration: none;
-        display: block;
-        word-wrap: break-word;
-    }
-    #search-panel .result:hover {
-        background-color: #ddd;
-    }
+</head>
+
+<body style="margin: 0;">
+
+<div id="p1" style="overflow: hidden; position: relative; background-color: white; width: 909px; height: 1286px;">
+
+<!-- Begin shared CSS values -->
+<style class="shared-css" type="text/css" >
+.t {
+	transform-origin: bottom left;
+	z-index: 2;
+	position: absolute;
+	white-space: pre;
+	overflow: visible;
+	line-height: 1.5;
+}
+.text-container {
+	white-space: pre;
+}
+@supports (-webkit-touch-callout: none) {
+	.text-container {
+		white-space: normal;
+	}
+}
+</style>
+<!-- End shared CSS values -->
+
+
+<!-- Begin inline CSS -->
+<style type="text/css" >
+
+#t1_1{left:509px;bottom:1073px;letter-spacing:-0.37px;word-spacing:0.31px;}
+#t2_1{left:223px;bottom:1041px;word-spacing:0.12px;}
+#t3_1{left:149px;bottom:1026px;letter-spacing:-0.19px;word-spacing:-0.62px;}
+#t4_1{left:54px;bottom:1000px;letter-spacing:-0.48px;}
+#t5_1{left:54px;bottom:989px;letter-spacing:-0.49px;word-spacing:-0.63px;}
+#t6_1{left:154px;bottom:1001px;letter-spacing:0.4px;}
+#t7_1{left:154px;bottom:1001px;letter-spacing:0.4px;}
+#t8_1{left:283px;bottom:1004px;letter-spacing:-0.42px;word-spacing:0.37px;}
+#t9_1{left:283px;bottom:993px;letter-spacing:-0.36px;word-spacing:0.07px;}
+#ta_1{left:448px;bottom:1000px;letter-spacing:-0.51px;word-spacing:-0.28px;}
+#tb_1{left:54px;bottom:971px;letter-spacing:-0.53px;}
+#tc_1{left:54px;bottom:960px;letter-spacing:-0.42px;word-spacing:-0.08px;}
+#td_1{left:154px;bottom:972px;letter-spacing:0.55px;}
+#te_1{left:154px;bottom:972px;letter-spacing:0.55px;}
+#tf_1{left:283px;bottom:975px;letter-spacing:-0.4px;word-spacing:0.04px;}
+#tg_1{left:283px;bottom:963px;letter-spacing:-0.48px;word-spacing:0.15px;}
+#th_1{left:283px;bottom:951px;letter-spacing:-0.23px;word-spacing:-0.38px;}
+#ti_1{left:577px;bottom:980px;letter-spacing:0.03px;word-spacing:-0.01px;}
+#tj_1{left:607px;bottom:964px;letter-spacing:0.03px;}
+#tk_1{left:607px;bottom:964px;letter-spacing:0.03px;}
+#tl_1{left:54px;bottom:934px;letter-spacing:-0.61px;}
+#tm_1{left:54px;bottom:922px;letter-spacing:-0.44px;word-spacing:-0.5px;}
+#tn_1{left:154px;bottom:934px;letter-spacing:0.54px;}
+#to_1{left:154px;bottom:934px;letter-spacing:0.54px;}
+#tp_1{left:154px;bottom:923px;letter-spacing:-0.28px;word-spacing:-0.81px;}
+#tq_1{left:283px;bottom:938px;letter-spacing:-0.44px;word-spacing:0.07px;}
+#tr_1{left:283px;bottom:926px;letter-spacing:-0.37px;word-spacing:-0.62px;}
+#ts_1{left:283px;bottom:914px;letter-spacing:-0.44px;word-spacing:0.39px;}
+#tt_1{left:283px;bottom:902px;letter-spacing:-0.71px;word-spacing:-0.01px;}
+#tu_1{left:283px;bottom:890px;letter-spacing:-0.71px;}
+#tv_1{left:54px;bottom:904px;letter-spacing:-0.34px;word-spacing:-0.44px;}
+#tw_1{left:54px;bottom:893px;letter-spacing:-0.3px;word-spacing:-0.09px;}
+#tx_1{left:54px;bottom:881px;letter-spacing:-0.35px;}
+#ty_1{left:154px;bottom:905px;letter-spacing:0.02px;}
+#tz_1{left:154px;bottom:905px;letter-spacing:0.02px;}
+#t10_1{left:225px;bottom:905px;letter-spacing:0.32px;word-spacing:-0.2px;}
+#t11_1{left:225px;bottom:905px;letter-spacing:0.32px;word-spacing:-0.2px;}
+#t12_1{left:54px;bottom:863px;letter-spacing:-0.5px;}
+#t13_1{left:54px;bottom:851px;letter-spacing:-0.4px;word-spacing:-0.11px;}
+#t14_1{left:154px;bottom:864px;letter-spacing:0.03px;}
+#t15_1{left:154px;bottom:864px;letter-spacing:0.03px;}
+#t16_1{left:283px;bottom:867px;letter-spacing:-0.44px;word-spacing:0.38px;}
+#t17_1{left:283px;bottom:855px;letter-spacing:-0.37px;}
+#t18_1{left:54px;bottom:835px;letter-spacing:-0.35px;word-spacing:-0.2px;}
+#t19_1{left:54px;bottom:824px;letter-spacing:-0.51px;word-spacing:-0.35px;}
+#t1a_1{left:154px;bottom:834px;letter-spacing:-0.5px;word-spacing:-0.28px;}
+#t1b_1{left:225px;bottom:791px;letter-spacing:0.45px;}
+#t1c_1{left:224px;bottom:791px;letter-spacing:0.45px;}
+#t1d_1{left:241px;bottom:779px;letter-spacing:0.62px;word-spacing:0.24px;}
+#t1e_1{left:241px;bottom:779px;letter-spacing:0.62px;word-spacing:0.24px;}
+#t1f_1{left:193px;bottom:767px;letter-spacing:0.67px;word-spacing:0.18px;}
+#t1g_1{left:193px;bottom:767px;letter-spacing:0.67px;word-spacing:0.18px;}
+#t1h_1{left:476px;bottom:791px;letter-spacing:0.43px;}
+#t1i_1{left:476px;bottom:791px;letter-spacing:0.43px;}
+#t1j_1{left:481px;bottom:779px;letter-spacing:0.52px;word-spacing:0.33px;}
+#t1k_1{left:480px;bottom:779px;letter-spacing:0.52px;word-spacing:0.33px;}
+#t1l_1{left:474px;bottom:767px;letter-spacing:0.61px;}
+#t1m_1{left:474px;bottom:767px;letter-spacing:0.61px;}
+#t1n_1{left:560px;bottom:798px;letter-spacing:0.42px;word-spacing:0.44px;}
+#t1o_1{left:559px;bottom:798px;letter-spacing:0.42px;word-spacing:0.44px;}
+#t1p_1{left:563px;bottom:786px;letter-spacing:0.48px;}
+#t1q_1{left:563px;bottom:786px;letter-spacing:0.48px;}
+#t1r_1{left:549px;bottom:780px;letter-spacing:0.88px;word-spacing:0.08px;}
+#t1s_1{left:549px;bottom:780px;letter-spacing:0.88px;word-spacing:0.08px;}
+#t1t_1{left:555px;bottom:771px;letter-spacing:0.91px;}
+#t1u_1{left:555px;bottom:771px;letter-spacing:0.91px;}
+#t1v_1{left:566px;bottom:763px;letter-spacing:0.78px;}
+#t1w_1{left:566px;bottom:763px;letter-spacing:0.78px;}
+#t1x_1{left:634px;bottom:798px;letter-spacing:0.57px;word-spacing:0.29px;}
+#t1y_1{left:634px;bottom:798px;letter-spacing:0.57px;word-spacing:0.29px;}
+#t1z_1{left:643px;bottom:786px;letter-spacing:0.21px;}
+#t20_1{left:643px;bottom:786px;letter-spacing:0.21px;}
+#t21_1{left:648px;bottom:780px;letter-spacing:1.03px;word-spacing:-0.09px;}
+#t22_1{left:648px;bottom:780px;letter-spacing:1.03px;word-spacing:-0.09px;}
+#t23_1{left:642px;bottom:771px;letter-spacing:0.97px;}
+#t24_1{left:641px;bottom:771px;letter-spacing:0.97px;}
+#t25_1{left:640px;bottom:763px;letter-spacing:0.84px;}
+#t26_1{left:640px;bottom:763px;letter-spacing:0.84px;}
+#t27_1{left:62px;bottom:636px;letter-spacing:-0.5px;word-spacing:-0.29px;}
+#t28_1{left:62px;bottom:620px;letter-spacing:-0.26px;word-spacing:-0.52px;}
+#t29_1{left:62px;bottom:604px;letter-spacing:-0.44px;word-spacing:0.38px;}
+#t2a_1{left:62px;bottom:587px;letter-spacing:-0.32px;word-spacing:0.26px;}
+#t2b_1{left:59px;bottom:719px;letter-spacing:-0.49px;word-spacing:-0.3px;}
+#t2c_1{left:59px;bottom:707px;letter-spacing:-0.45px;word-spacing:0.4px;}
+#t2d_1{left:59px;bottom:695px;letter-spacing:-0.35px;word-spacing:0.29px;}
+#t2e_1{left:482px;bottom:719px;letter-spacing:-0.32px;}
+#t2f_1{left:480px;bottom:707px;letter-spacing:-0.27px;word-spacing:0.22px;}
+#t2g_1{left:466px;bottom:695px;letter-spacing:-0.31px;}
+#t2h_1{left:564px;bottom:719px;letter-spacing:-0.32px;}
+#t2i_1{left:562px;bottom:707px;letter-spacing:-0.27px;word-spacing:0.22px;}
+#t2j_1{left:549px;bottom:695px;letter-spacing:-0.31px;}
+#t2k_1{left:59px;bottom:675px;letter-spacing:-0.28px;word-spacing:-0.52px;}
+#t2l_1{left:287px;bottom:676px;letter-spacing:-0.38px;word-spacing:0.39px;}
+#t2m_1{left:57.1px;bottom:655.7px;letter-spacing:0.18px;}
+#t2n_1{left:144px;bottom:657px;letter-spacing:-0.34px;word-spacing:-0.68px;}
+#t2o_1{left:59px;bottom:545px;letter-spacing:-0.05px;}
+#t2p_1{left:59px;bottom:545px;letter-spacing:-0.05px;}
+#t2q_1{left:162px;bottom:547px;letter-spacing:-0.42px;word-spacing:-0.53px;}
+#t2r_1{left:59px;bottom:530px;letter-spacing:-0.3px;word-spacing:-0.49px;}
+#t2s_1{left:59px;bottom:515px;letter-spacing:-0.4px;word-spacing:-0.38px;}
+#t2t_1{left:59px;bottom:498px;letter-spacing:-0.37px;word-spacing:0.31px;}
+#t2u_1{left:59px;bottom:486px;letter-spacing:-0.19px;}
+#t2v_1{left:59px;bottom:470px;letter-spacing:-0.33px;word-spacing:0.27px;}
+#t2w_1{left:59px;bottom:458px;letter-spacing:-0.27px;word-spacing:0.21px;}
+#t2x_1{left:58px;bottom:743px;letter-spacing:0.1px;}
+#t2y_1{left:58px;bottom:743px;letter-spacing:0.1px;}
+#t2z_1{left:54px;bottom:415px;letter-spacing:-0.57px;}
+#t30_1{left:54px;bottom:404px;letter-spacing:-0.41px;word-spacing:0.35px;}
+#t31_1{left:54px;bottom:392px;letter-spacing:-0.3px;}
+#t32_1{left:127px;bottom:415px;letter-spacing:-0.35px;word-spacing:-0.43px;}
+#t33_1{left:293px;bottom:415px;letter-spacing:-0.31px;word-spacing:-0.47px;}
+#t34_1{left:293px;bottom:404px;letter-spacing:-0.3px;word-spacing:0.23px;}
+#t35_1{left:293px;bottom:392px;letter-spacing:-0.3px;}
+#t36_1{left:364px;bottom:415px;letter-spacing:-0.44px;word-spacing:-0.35px;}
+#t37_1{left:364px;bottom:404px;letter-spacing:-0.4px;word-spacing:0.35px;}
+#t38_1{left:364px;bottom:392px;letter-spacing:-0.38px;word-spacing:0.31px;}
+#t39_1{left:511px;bottom:416px;letter-spacing:-0.37px;word-spacing:-0.42px;}
+#t3a_1{left:293px;bottom:374px;letter-spacing:-0.18px;word-spacing:-0.6px;}
+#t3b_1{left:293px;bottom:363px;letter-spacing:-0.35px;word-spacing:0.29px;}
+#t3c_1{left:293px;bottom:351px;letter-spacing:-0.2px;}
+#t3d_1{left:364px;bottom:374px;letter-spacing:-0.4px;word-spacing:-0.38px;}
+#t3e_1{left:364px;bottom:363px;letter-spacing:-0.37px;word-spacing:0.31px;}
+#t3f_1{left:364px;bottom:351px;letter-spacing:-0.38px;word-spacing:0.31px;}
+#t3g_1{left:511px;bottom:375px;letter-spacing:-0.4px;word-spacing:-0.41px;}
+#t3h_1{left:293px;bottom:324px;letter-spacing:-0.24px;word-spacing:-0.55px;}
+#t3i_1{left:293px;bottom:312px;letter-spacing:-0.41px;word-spacing:0.35px;}
+#t3j_1{left:293px;bottom:300px;letter-spacing:-0.44px;}
+#t3k_1{left:783px;bottom:18px;letter-spacing:-0.84px;word-spacing:0.74px;}
+#t3l_1{left:448px;bottom:972px;letter-spacing:-0.14px;}
+#t3m_1{left:448px;bottom:934px;letter-spacing:-0.14px;}
+#t3n_1{left:448px;bottom:864px;letter-spacing:-0.15px;}
+#t3o_1{left:637px;bottom:375px;letter-spacing:-0.15px;}
+
+.s1{font-size:12px;font-family:QTAAAA-2BMicrosoftSansSerif-_1o;color:#000;}
+.s2{font-size:21px;font-family:QDBAAA-2BTahoma-3F-3F-3F-3F-_1p;color:#000;}
+.s3{font-size:15px;font-family:QTAAAA-2BMicrosoftSansSerif-_1o;color:#696969;}
+.s4{font-size:15px;font-family:QTAAAA-2BMicrosoftSansSerif-_1o;color:#000;}
+.s5{font-size:12px;font-family:QTAAAA-2BMicrosoftSansSerif-_1o;color:#696969;}
+.s6{font-size:8px;font-family:QTAAAA-2BMicrosoftSansSerif-_1o;color:#696969;}
+.s7{font-size:11px;font-family:QTAAAA-2BMicrosoftSansSerif-_1o;color:#696969;}
+.s8{font-size:14px;font-family:QTAAAA-2BMicrosoftSansSerif-_1o;color:#000;}
+.s9{font-size:15px;font-family:QIBAAA-2BTahoma-3F-3F-3F-3F-_1q;color:#000;}
+.sa{font-size:18px;font-family:QTAAAA-2BMicrosoftSansSerif-_1o;color:#000;}
+.sb{font-size:17px;font-family:QYAAAA-2BTimesNewRoman-3F-3F_1r;color:#000;}
+.t.m0_1{transform:matrix(0.957,0,-0.29,0.96,0,0);}
+</style>
+<!-- End inline CSS -->
+
+<!-- Begin embedded font definitions -->
+<style id="fonts1" type="text/css" >
+
+@font-face {
+	font-family: QDBAAA-2BTahoma-3F-3F-3F-3F-_1p;
+	src: url("fonts/QDBAAA-2BTahoma-3F-3F-3F-3F-_1p.woff") format("woff");
+}
+
+@font-face {
+	font-family: QIBAAA-2BTahoma-3F-3F-3F-3F-_1q;
+	src: url("fonts/QIBAAA-2BTahoma-3F-3F-3F-3F-_1q.woff") format("woff");
+}
+
+@font-face {
+	font-family: QTAAAA-2BMicrosoftSansSerif-_1o;
+	src: url("fonts/QTAAAA-2BMicrosoftSansSerif-_1o.woff") format("woff");
+}
+
+@font-face {
+	font-family: QYAAAA-2BTimesNewRoman-3F-3F_1r;
+	src: url("fonts/QYAAAA-2BTimesNewRoman-3F-3F_1r.woff") format("woff");
+}
 
 </style>
-</head>
-<body class="light-theme">
-    <nav id="sidebar">
-        <div id="sidebar-controls" class="controls">
-            <button id="btnThumbnails" data-lang-title="control.thumbnails" title="Thumbnails" class="btn"><i class="fa fa-picture-o fa-lg" aria-hidden="true"></i></button>
-            <button id="btnBookmarks" data-lang-title="control.bookmarks" title="Bookmarks" class="btn"><i class="fa fa-list-ul fa-lg" aria-hidden="true"></i></button>
-            <button id="btnSearch" data-lang-title="control.search" title="Search" class="btn"><i class="fa fa-search fa-lg" aria-hidden="true"></i></button>
-        </div>
-        <div id="sidebar-content">
-            <div id="thumbnails-panel"></div>
-            <div id="bookmarks-panel"></div>
-            <div id="search-panel">
-                <input id="searchInput" data-lang-title="search.search" title="Search" type="text">
-                <label class="searchOption"><input type="checkbox" id="cbMatchCase"><span data-lang-text="search.match-case"> Match case</span></label>
-                <label class="searchOption"><input type="checkbox" id="cbLimitResults"><span data-lang-text="search.limit-results-1"> Limit results 1 per page</span></label>
-                <hr>
-                <span id="searchResultsCount"></span>
-                <div id="searchResults"></div>
-            </div>
-        </div>
-    </nav>
+<!-- End embedded font definitions -->
 
-    <div id="main">
-        <nav id="controls" class="controls">
-            <div id="controls-left">
-                <button id="btnSideToggle" data-lang-title="control.sidebar" title="Sidebar" class="btn"><i class="fa fa-th fa-lg" aria-hidden="true"></i></button>
-                <button id="btnThemeToggle" data-lang-title="control.theme-toggle" title="Theme Toggle" class="btn"><i class="fa fa-lightbulb-o fa-lg" aria-hidden="true"></i></button>
-            </div>
+<!-- Begin page background -->
+<div id="pg1Overlay" style="width:100%; height:100%; position:absolute; z-index:1; background-color:rgba(0,0,0,0); -webkit-user-select: none;"></div>
+<div id="pg1" style="-webkit-user-select: none;"><object width="909" height="1286" data="1/1.svg" type="image/svg+xml" id="pdf1" style="width:909px; height:1286px; -moz-transform:scale(1); z-index: 0;"></object></div>
+<!-- End page background -->
 
-            <div id="controls-center">
-                <button id="btnPrev" data-lang-title="control.prev" title="Previous Page" class="btn"><i class="fa fa-caret-left fa-2x" aria-hidden="true"></i></button>
-                <select id="btnGo">
 
-                </select>
-                <span id="pgCount"></span>
-                <button id="btnNext" data-lang-title="control.next" title="Next Page" class="btn"><i class="fa fa-caret-right fa-2x" aria-hidden="true"></i></button>
+<!-- Begin text definitions (Positioned/styled in CSS) -->
+<div class="text-container"><span id="t1_1" class="t s1">Raport de Analize Medicale: 856434.2021 </span>
+<span id="t2_1" class="t s2">INVESTIGAȚII BIOLOGIE MOLECULARĂ </span>
+<span id="t3_1" class="t s3">PCR Molecular biology test | ПЦР Молекулярно-биологическое исследование </span>
+<span id="t4_1" class="t s4">Nume: </span>
+<span id="t5_1" class="t s5">Surname/ Ф амилия </span>
+<span id="t6_1" class="t s4">Ungur </span><span id="t7_1" class="t s4">Ungur </span>
+<span id="t8_1" class="t s1">Prelevarea probei, adresa: </span>
+<span id="t9_1" class="t s5">Place of sampling/ Место забора </span>
+<span id="ta_1" class="t s4">mun.Chişinău, bd.Dacia, 47/2 </span>
+<span id="tb_1" class="t s4">Prenume: </span>
+<span id="tc_1" class="t s5">Given name/ Имя </span>
+<span id="td_1" class="t s4">Marian </span><span id="te_1" class="t s4">Marian </span>
+<span id="tf_1" class="t s1">Prelevarea probei, data/ ora: </span>
+<span id="tg_1" class="t s5">Date/ time of sampling/ </span>
+<span id="th_1" class="t s5">Дата/ время забора </span>
+<span id="ti_1" class="t s6">Proba Nr./Sample No./Образец № </span>
+<span id="tj_1" class="t s3">856434 </span><span id="tk_1" class="t s3">856434 </span>
+<span id="tl_1" class="t s4">Gen: </span>
+<span id="tm_1" class="t s5">Sex/ Пол </span>
+<span id="tn_1" class="t s4">Masculin </span><span id="to_1" class="t s4">Masculin </span>
+<span id="tp_1" class="t s5">Male/ Мужской </span>
+<span id="tq_1" class="t s1">Înregistrarea probei î n laborator, </span>
+<span id="tr_1" class="t s1">data/ ora: </span>
+<span id="ts_1" class="t s5">Time of sample received by laboratory/ </span>
+<span id="tt_1" class="t s7">Время получения пробы в </span>
+<span id="tu_1" class="t s7">лабораторию </span>
+<span id="tv_1" class="t s4">Data naşterii: </span>
+<span id="tw_1" class="t s5">Date of birth/ Дата </span>
+<span id="tx_1" class="t s5">рождения </span>
+<span id="ty_1" class="t s4">10.05.1988 </span><span id="tz_1" class="t s4">10.05.1988 </span><span id="t10_1" class="t s4">(33 ani) </span><span id="t11_1" class="t s4">(33 ani) </span>
+<span id="t12_1" class="t s4">IDNP: </span>
+<span id="t13_1" class="t s5">Personal No./ ИПН </span>
+<span id="t14_1" class="t s4">2007001007788 </span><span id="t15_1" class="t s4">2007001007788 </span>
+<span id="t16_1" class="t s1">Data efectuării examinărilor: </span>
+<span id="t17_1" class="t s5">Examination date/ Дата иследования </span>
+<span id="t18_1" class="t s8">Domiciliu, adresa: </span>
+<span id="t19_1" class="t s5">Address/ Адрес </span>
+<span id="t1a_1" class="t s4">Chișinău, str. Gheorghe Asachi 62/4, ap. 11 </span>
+<span id="t1b_1" class="t s4">Parametru </span><span id="t1c_1" class="t s4">Parametru </span>
+<span id="t1d_1" class="t s5">Test / </span><span id="t1e_1" class="t s5">Test / </span>
+<span id="t1f_1" class="t s5">Название (показатель) </span><span id="t1g_1" class="t s5">Название (показатель) </span>
+<span id="t1h_1" class="t s4">Rezultat </span><span id="t1i_1" class="t s4">Rezultat </span>
+<span id="t1j_1" class="t s5">Result / </span><span id="t1k_1" class="t s5">Result / </span>
+<span id="t1l_1" class="t s5">Результат </span><span id="t1m_1" class="t s5">Результат </span>
+<span id="t1n_1" class="t s1">Valori de </span><span id="t1o_1" class="t s1">Valori de </span>
+<span id="t1p_1" class="t s1">referință </span><span id="t1q_1" class="t s1">referință </span>
+<span id="t1r_1" class="t s6">Reference range / </span><span id="t1s_1" class="t s6">Reference range / </span>
+<span id="t1t_1" class="t s6">Референсные </span><span id="t1u_1" class="t s6">Референсные </span>
+<span id="t1v_1" class="t s6">значения </span><span id="t1w_1" class="t s6">значения </span>
+<span id="t1x_1" class="t s1">Unităţi de </span><span id="t1y_1" class="t s1">Unităţi de </span>
+<span id="t1z_1" class="t s1">măsură </span><span id="t20_1" class="t s1">măsură </span>
+<span id="t21_1" class="t s6">Units / </span><span id="t22_1" class="t s6">Units / </span>
+<span id="t23_1" class="t s6">Единицы </span><span id="t24_1" class="t s6">Единицы </span>
+<span id="t25_1" class="t s6">измерения </span><span id="t26_1" class="t s6">измерения </span>
+<span id="t27_1" class="t s4">Acest rezultat confirmă absența virusului SARS-CoV-2, COVID-19 în exudatul nazofaringian, la momentul </span>
+<span id="t28_1" class="t s4">prelevării materialului biologic. </span>
+<span id="t29_1" class="t s5">This result confirms the absence of SARS-CoV-2, COVID19 virus in nasopharyngeal exudate at the time of biological sampling. </span>
+<span id="t2a_1" class="t s5">Результат подтверждает отсутствие вируса SARS-CoV-2, COVID-19 в носоглоточном мазке на момент забора биоматериала. </span>
+<span id="t2b_1" class="t s4">SARS–CoV-2, COVID-19, în exudat nazofaringian (ARN, calitativ) </span>
+<span id="t2c_1" class="t s5">SARS-CoV-2, COVID-19 (RNA, qualitative) in nasopharyngeal swab / </span>
+<span id="t2d_1" class="t s5">SARS-CoV-2, COVID-19 (РНК, качественный), мазок из зева и носа </span>
+<span id="t2e_1" class="t s4">negativ </span>
+<span id="t2f_1" class="t s5">negative / </span>
+<span id="t2g_1" class="t s5">отрицательный </span>
+<span id="t2h_1" class="t s4">negativ </span>
+<span id="t2i_1" class="t s5">negative / </span>
+<span id="t2j_1" class="t s5">отрицательный </span>
+<span id="t2k_1" class="t s4">Metoda de investigare: Real Time PCR </span><span id="t2l_1" class="t s5">| Investigation method: Real Time PCR | Метод иследования: ПЦР в реальном времени. </span>
+<span id="t2m_1" class="t m0_1 s9">Interpretare: </span><span id="t2n_1" class="t s5">Interpretation:/ Интерпретация: </span>
+<span id="t2o_1" class="t sa">IMPORTANT: </span><span id="t2p_1" class="t sa">IMPORTANT: </span><span id="t2q_1" class="t s5">Important/ Важно </span>
+<span id="t2r_1" class="t s4">Acest buletin de analize medicale este dotat cu QR-code și este valabil fără ștampilă și semnătură, inclusiv și </span>
+<span id="t2s_1" class="t s4">în format electronic. Pentru verificarea autenticității lui, vă rugăm să scanați QR codul. </span>
+<span id="t2t_1" class="t s5">This laboratory report holds a QR code and is valid without stamp and signature, even electronic kind. To verify its authenticity, please scan the QR </span>
+<span id="t2u_1" class="t s5">code. </span>
+<span id="t2v_1" class="t s5">Этот лабораторный отчет включает QR-код и действителен без печати и подписи, в том числе и в электронном формате. Чтобы </span>
+<span id="t2w_1" class="t s5">проверить его подлинность, отсканируйте QR-код. </span>
+<span id="t2x_1" class="t s4">COVID-19 </span><span id="t2y_1" class="t s4">COVID-19 </span>
+<span id="t2z_1" class="t s4">Executant: </span>
+<span id="t30_1" class="t s5">Processed by </span>
+<span id="t31_1" class="t s5">Исполнитель </span>
+<span id="t32_1" class="t s4">Biolog, Irina Belous </span><span id="t33_1" class="t s4">Verificat de: </span>
+<span id="t34_1" class="t s5">Checked by </span>
+<span id="t35_1" class="t s5">Проверено </span>
+<span id="t36_1" class="t s4">Şeful departamentului </span>
+<span id="t37_1" class="t s5">Head of departament </span>
+<span id="t38_1" class="t s5">Заведующим отделом </span>
+<span id="t39_1" class="t s4">Rotari Ion </span>
+<span id="t3a_1" class="t s4">Validat de: </span>
+<span id="t3b_1" class="t s5">Approved by </span>
+<span id="t3c_1" class="t s5">Утверждено </span>
+<span id="t3d_1" class="t s4">Şeful laboratorului </span>
+<span id="t3e_1" class="t s5">Head of Laboratory </span>
+<span id="t3f_1" class="t s5">Заведующий лабораторией </span>
+<span id="t3g_1" class="t s4">Armaşu Sergiu </span>
+<span id="t3h_1" class="t s4">Eliberat de: </span>
+<span id="t3i_1" class="t s5">Issued by </span>
+<span id="t3j_1" class="t s5">Выдан </span>
+<span id="t3k_1" class="t sb">Pagina 1 din 1 </span>
+<span id="t3l_1" class="t s4">29.09.2021 07:49 </span>
+<span id="t3m_1" class="t s4">29.09.2021 09:06 </span>
+<span id="t3n_1" class="t s4">29.09.2021 </span>
+<span id="t3o_1" class="t s4">29.09.2021 </span></div>
+<!-- End text definitions -->
 
-                <button id="btnSelect" data-lang-title="control.select" title="Select" class="btn mobile-hidden"><i class="fa fa-i-cursor fa-lg" aria-hidden="true"></i></button>
-                <button id="btnMove" title="Pan" data-lang-title="control.move" class="btn mobile-hidden"><i class="fa fa-arrows fa-lg" aria-hidden="true"></i></button>
 
-                <button id="btnZoomOut" data-lang-title="control.zoom-out" title="Zoom Out" class="btn mobile-hidden"><i class="fa fa-minus fa-lg" aria-hidden="true"></i></button>
-                <select id="btnZoom" class="mobile-hidden">
-                    <option value="specific">100%</option>
-                    <option data-lang-text="control.actual-size" value="actualsize">Actual Size</option>
-                    <option data-lang-text="control.fit-width" value="fitwidth">Fit Width</option>
-                    <option data-lang-text="control.fit-height" value="fitheight">Fit Height</option>
-                    <option data-lang-text="control.fit-page" value="fitpage">Fit Page</option>
-                    <option data-lang-text="control.auto" value="auto">Automatic</option>
-                </select>
-                <button id="btnZoomIn" data-lang-title="control.zoom-in" title="Zoom In" class="btn mobile-hidden"><i class="fa fa-plus fa-lg" aria-hidden="true"></i></button>
-                <select id="btnView" class="mobile-hidden">
-
-                </select>
-            </div>
-            <div id="controls-right">
-                <button id="btnFullScreen" data-lang-title="control.fullscreen" title="Fullscreen" class="btn"><i class="fa fa-arrows-alt fa-lg" aria-hidden="true"></i></button>
-            </div>
-        </nav>
-
-        <div id="idrviewer">
-
-        </div>
-    </div>
-    <script src="config.js" type="text/javascript"></script>
-    <script type="text/javascript">IDRViewer.setup();</script>
+</div>
 </body>
 </html>
